@@ -1,0 +1,54 @@
+kind: pipeline
+name: all-in-one
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+
+  - name: Clone
+    image: alpine/git
+    commands:
+      - git clone https://github.com/ertios-com/ldrop.git .
+      - git checkout ${DRONE_COMMIT}
+
+  - name: Build Ubuntu 20.04
+    image: ertios_basic_x86-64_clang_compiler
+    pull: if-not-exists
+    user: 0
+    commands:
+      - mkdir build_ertios_basic_x86-64_clang_release
+      - cd    build_ertios_basic_x86-64_clang_release
+      - cmake -DCMAKE_BUILD_TYPE=Release ..
+      - make -j $(nproc)
+
+  - name: Release Notes
+    image: ubuntu:20.04
+    pull: if-not-exists
+    commands:
+      - echo "$(awk -v section=[${DRONE_TAG}] '$2==section{ f=1; next }; /^## /{ f=0; next }; f==1{ print $0 };' ./CHANGELOG.md)" > release_notes_${DRONE_TAG}.md
+      - cat release_notes_${DRONE_TAG}.md
+    when:
+      event: tag
+
+  - name: Release
+    image: plugins/github-release
+    settings:
+      title: "ldrop ${DRONE_TAG}"
+      note: ./release_notes_${DRONE_TAG}.md
+      api_key:
+        from_secret: drone.io-release
+      files:
+        - build_ertios_basic_x86-64_clang_release/ldrop
+    checksum:
+      - md5
+      - sha1
+      - sha256
+      - sha512
+      - adler32
+      - crc32
+    when:
+      event: tag
