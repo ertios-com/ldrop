@@ -2,6 +2,9 @@
 
 Drop fields from logfmt streams. A complimentary utility to [brandur/hutils](https://github.com/brandur/hutils).
 
+[![Release version](https://img.shields.io/github/v/release/ertios-com/ldrop?logo=github&style=for-the-badge)](https://github.com/ertios-com/ldrop/releases) [![Build status at drone.ertios.com](https://img.shields.io/drone/build/ertios-com/ldrop/master?logo=drone&server=https%3A%2F%2Fdrone.ertios.com&style=for-the-badge)](https://drone.ertios.com/ertios-com/ldrop/) [![License: GPL-3](https://img.shields.io/github/license/ertios-com/ldrop?style=for-the-badge)](https://github.com/ertios-com/ldrop/blob/develop/LICENSE.txt)
+
+
 ## Usage
 
 Original stream
